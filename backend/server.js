@@ -33,3 +33,18 @@ app.listen(
     `Server running in ${process.env.NODE_ENV} mode on Port ${PORT}`.bold
   )
 );
+
+process.on("SIGINT", () => {
+  console.log("Bye bye!");
+  process.exit();
+});
+
+// process.on("uncaughtException", () => {
+//   console.log("Bye bye!");
+//   process.exit();
+// });
+
+// process.on("SIGTERM", () => {
+//   console.log("Bye bye!");
+//   process.exit();
+// });
