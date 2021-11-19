@@ -8,6 +8,15 @@ import User from "../models/userModel.js";
 const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
+  if (!email) {
+    res.status(401);
+    throw new Error("Please enter an email!");
+  }
+  if (!password) {
+    res.status(401);
+    throw new Error("Please enter a password!");
+  }
+
   const user = await User.findOne({ email });
   if (user) {
     if (await user.matchPassword(password)) {
@@ -20,7 +29,7 @@ const authUser = asyncHandler(async (req, res) => {
       });
     } else {
       res.status(401);
-      throw new Error("Password do not match!");
+      throw new Error("Invalid password!");
     }
   } else {
     res.status(401);
