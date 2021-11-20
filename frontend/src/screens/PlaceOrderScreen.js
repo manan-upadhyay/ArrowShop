@@ -1,19 +1,14 @@
-import React, { useState } from "react";
-import {
-  Button,
-  Row,
-  Col,
-  ListGroup,
-  Image,
-  Card,
-  ListGroupItem,
-} from "react-bootstrap";
+import React, { useEffect } from "react";
+import { Button, Row, Col, ListGroup, Image, Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
 import CheckoutSteps from "../components/CheckoutSteps";
+import { createOrder } from "../actions/orderActions";
 
-const PlaceOrderScreen = () => {
+const PlaceOrderScreen = ({ history }) => {
+  const dispatch = useDispatch();
+
   const cart = useSelector((state) => state.cart);
 
   //Calculate Prices
@@ -36,8 +31,29 @@ const PlaceOrderScreen = () => {
     Number(cart.taxPrice)
   ).toFixed(2);
 
+  const orderCreate = useSelector((state) => state.orderCreate);
+  const { order, success, error } = orderCreate;
+
+  useEffect(() => {
+    if (success) {
+      history.push(`/order/${order._id}`);
+    }
+    // eslint-disable-next-line
+  }, [history, success]);
+
   const placeOrderHandler = () => {
     console.log("Place Order");
+    dispatch(
+      createOrder({
+        orderItems: cart.cartItems,
+        shippingAddress: cart.shippingAddress,
+        paymentMethod: cart.paymentMethod,
+        itemsPrice: cart.itemsPrice,
+        shippingPrice: cart.shippingPrice,
+        taxPrice: cart.taxPrice,
+        totalPrice: cart.totalPrice,
+      })
+    );
   };
 
   return (
@@ -69,7 +85,7 @@ const PlaceOrderScreen = () => {
               ) : (
                 <ListGroup variant="flush">
                   {cart.cartItems.map((item, index) => (
-                    <ListGroupItem key={index}>
+                    <ListGroup.Item key={index}>
                       <Row>
                         <Col md={1}>
                           <Image
@@ -91,7 +107,7 @@ const PlaceOrderScreen = () => {
                           {(item.qty * item.price).toFixed(2)}
                         </Col>
                       </Row>
-                    </ListGroupItem>
+                    </ListGroup.Item>
                   ))}
                 </ListGroup>
               )}
@@ -102,39 +118,43 @@ const PlaceOrderScreen = () => {
         <Col md={4}>
           <Card>
             <ListGroup variant="flush">
-              <ListGroupItem>
+              <ListGroup.Item>
                 <h2>Order Summary</h2>
-              </ListGroupItem>
+              </ListGroup.Item>
 
-              <ListGroupItem>
+              <ListGroup.Item>
                 <Row>
                   <Col>Items</Col>
                   <Col>${cart.itemsPrice}</Col>
                 </Row>
-              </ListGroupItem>
+              </ListGroup.Item>
 
-              <ListGroupItem>
+              <ListGroup.Item>
                 <Row>
                   <Col>Shipping</Col>
                   <Col>${cart.shippingPrice}</Col>
                 </Row>
-              </ListGroupItem>
+              </ListGroup.Item>
 
-              <ListGroupItem>
+              <ListGroup.Item>
                 <Row>
                   <Col>Tax</Col>
                   <Col>${cart.taxPrice}</Col>
                 </Row>
-              </ListGroupItem>
+              </ListGroup.Item>
 
-              <ListGroupItem>
+              <ListGroup.Item>
                 <Row>
                   <Col>Total</Col>
                   <Col>${cart.totalPrice}</Col>
                 </Row>
-              </ListGroupItem>
+              </ListGroup.Item>
 
-              <ListGroupItem>
+              <ListGroup.Item>
+                {error && <Message variant="danger">{error}</Message>}
+              </ListGroup.Item>
+
+              <ListGroup.Item>
                 <Button
                   type="button"
                   className="btn-block"
@@ -143,7 +163,7 @@ const PlaceOrderScreen = () => {
                 >
                   Place Order
                 </Button>
-              </ListGroupItem>
+              </ListGroup.Item>
             </ListGroup>
           </Card>
         </Col>
