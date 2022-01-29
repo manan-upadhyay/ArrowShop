@@ -4,8 +4,15 @@ import { Table, Button, Row, Col } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
-import { listProducts, deleteProduct } from "../actions/productActions";
-import { PRODUCT_DELETE_RESET } from "../constants/productConstants";
+import {
+  listProducts,
+  deleteProduct,
+  createProduct,
+} from "../actions/productActions";
+import {
+  PRODUCT_DELETE_RESET,
+  PRODUCT_CREATE_RESET,
+} from "../constants/productConstants";
 
 const ProductListScreen = ({ history, match }) => {
   const dispatch = useDispatch();
@@ -20,29 +27,55 @@ const ProductListScreen = ({ history, match }) => {
     success: successDelete,
   } = productDelete;
 
+  const productCreate = useSelector((state) => state.productCreate);
+  const {
+    loading: loadingCreate,
+    error: errorCreate,
+    success: successCreate,
+    product: createdProduct,
+  } = productCreate;
+
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
   useEffect(() => {
-    if (userInfo && userInfo.isAdmin) {
-      dispatch(listProducts());
-    } else {
+    dispatch({
+      type: PRODUCT_DELETE_RESET,
+    });
+    dispatch({
+      type: PRODUCT_CREATE_RESET,
+    });
+
+    if (!userInfo.isAdmin) {
       history.push("/login");
     }
-  }, [dispatch, history, userInfo, successDelete]);
+
+    if (successCreate) {
+      history.push(`/admin/product/${createdProduct._id}/edit`);
+    } else {
+      dispatch(listProducts());
+    }
+  }, [
+    dispatch,
+    history,
+    userInfo,
+    successDelete,
+    successCreate,
+    createdProduct,
+  ]);
 
   const deleteHandler = (product) => {
     let text = `Are you sure, you want to delete this product - "${product.name}" ? \n (Product ID: ${product._id})`;
     if (window.confirm(text) === true) {
       dispatch(deleteProduct(product._id));
-      dispatch({
-        type: PRODUCT_DELETE_RESET,
-      });
     }
   };
 
-  const createProductHandler = (product) => {
-    console.log("create a product");
+  const createProductHandler = () => {
+    let text = `Create a new product?`;
+    if (window.confirm(text) === true) {
+      dispatch(createProduct());
+    }
   };
 
   return (
@@ -59,6 +92,9 @@ const ProductListScreen = ({ history, match }) => {
       </Row>
       {loadingDelete && <Loader />}
       {errorDelete && <Message variant="error">{errorDelete}</Message>}
+
+      {loadingCreate && <Loader />}
+      {errorCreate && <Message variant="error">{errorCreate}</Message>}
 
       {loading ? (
         <Loader />
