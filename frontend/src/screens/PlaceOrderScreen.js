@@ -6,6 +6,7 @@ import Message from "../components/Message";
 import CheckoutSteps from "../components/CheckoutSteps";
 import { createOrder, listMyOrders } from "../actions/orderActions";
 import { CART_RESET } from "../constants/cartConstants";
+import { ORDER_CREATE_RESET } from "../constants/orderConstants";
 
 const PlaceOrderScreen = ({ history }) => {
   const dispatch = useDispatch();
@@ -37,6 +38,7 @@ const PlaceOrderScreen = ({ history }) => {
 
   useEffect(() => {
     if (success) {
+      dispatch({ type: ORDER_CREATE_RESET });
       history.push(`/order/${order._id}`);
     }
     // eslint-disable-next-line
@@ -45,7 +47,6 @@ const PlaceOrderScreen = ({ history }) => {
   const placeOrderHandler = () => {
     console.log("Place Order");
     dispatch(listMyOrders());
-    dispatch({ type: CART_RESET });
     dispatch(
       createOrder({
         orderItems: cart.cartItems,
@@ -57,6 +58,7 @@ const PlaceOrderScreen = ({ history }) => {
         totalPrice: cart.totalPrice,
       })
     );
+    dispatch({ type: CART_RESET });
   };
 
   return (
