@@ -40,6 +40,8 @@ const PlaceOrderScreen = ({ history }) => {
     if (success) {
       dispatch({ type: ORDER_CREATE_RESET });
       history.push(`/order/${order._id}`);
+      dispatch({ type: CART_RESET });
+      localStorage.removeItem("cartItems");
     }
     // eslint-disable-next-line
   }, [history, success]);
@@ -58,7 +60,6 @@ const PlaceOrderScreen = ({ history }) => {
         totalPrice: cart.totalPrice,
       })
     );
-    dispatch({ type: CART_RESET });
   };
 
   return (
