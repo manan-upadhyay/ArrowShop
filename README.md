@@ -60,3 +60,34 @@ The project covers real-world e-commerce workflows such as authentication, produ
 npm start
 npm run build
 npm test
+```
+
+### Backend
+```bash
+npm run server
+npm run data:import
+npm run data:destroy
+```
+
+---
+
+## Notes on Code & Usage
+
+- This repository focuses on **architecture, structure, and patterns**
+- UI and business logic mirror real-world systems
+- Due to prior work in a service-based organization, client production code cannot be open-sourced
+
+---
+
+## Disclaimer
+
+This project is intended for learning, demonstration, and architectural reference purposes.
+It is not intended for direct production deployment without additional security, testing, and hardening.
+
+---
+
+## Author
+
+**Manan Upadhyay**
+Senior Full Stack Developer (AI-augmented)
+React · Node.js · MongoDB · Performance · Architecture
