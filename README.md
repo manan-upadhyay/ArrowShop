@@ -89,5 +89,7 @@ It is not intended for direct production deployment without additional security,
 ## Author
 
 **Manan Upadhyay**
+
 Senior Full Stack Developer (AI-augmented)
+
 React · Node.js · MongoDB · Performance · Architecture
